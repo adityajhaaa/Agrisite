@@ -1,0 +1,146 @@
+<?php
+require_once 'config.php';
+
+// Get the current page from the URL parameter
+$page = isset($_GET['page']) ? $_GET['page'] : 'home';
+
+// Function to get content based on page
+function get_content($page) {
+    global $conn;  // Make database connection available to content files
+    $content = '';
+    $content_file = 'content/' . $page . '_content.php';
+    
+    if (file_exists($content_file)) {
+        ob_start();
+        include $content_file;
+        $content = ob_get_clean();
+        } else {
+        // Default to home if page doesn't exist
+        ob_start();
+        include 'content/home_content.php';
+        $content = ob_get_clean();
+    }
+    return $content;
+}
+
+// Get the content for the current page
+$content = get_content($page);
+
+// Get current user data
+$user = get_user_data();
+
+// Get cart items
+$cart_items = get_cart_items();
+
+// Get categories for navigation
+$categories = get_categories();
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroMart - <?php echo ucfirst($page); ?></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.5/swiper-bundle.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="header-top">
+            <div class="container">
+                <div class="text-center">Free Shipping on Orders Over $100 | Call us: +1-234-567-8900</div>
+            </div>
+        </div>
+        
+        <div class="container">
+            <div class="header-main">
+                <div class="logo">
+                    <a href="index.php">AgroMart</a>
+                </div>
+                
+                <div class="search-bar">
+                    <form action="index.php" method="GET">
+                        <input type="hidden" name="page" value="products">
+                        <input type="text" name="search" placeholder="Search for products...">
+                        <button type="submit"><i class="fas fa-search"></i></button>
+                    </form>
+                </div>
+                
+                <div class="header-right">
+                    <div class="user-actions">
+                        <?php if(is_logged_in()): ?>
+                            <a href="index.php?page=account">My Account</a> |
+                            <a href="index.php?page=logout">Logout</a>
+                        <?php else: ?>
+                            <a href="index.php?page=login">Login</a> |
+                            <a href="index.php?page=register">Register</a>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <div class="cart-icon">
+                        <a href="index.php?page=cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count"><?php echo count($cart_items); ?></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <nav>
+            <div class="container">
+                <ul class="nav-menu">
+                    <li><a href="index.php">Home</a></li>
+                    <li class="dropdown">
+                        <a href="index.php?page=products">Products <i class="fas fa-chevron-down"></i></a>
+                        <ul class="dropdown-menu">
+                            <?php foreach($categories as $category): ?>
+                                <li><a href="index.php?page=products&category=<?php echo $category['id']; ?>"><?php echo htmlspecialchars($category['name']); ?></a></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </li>
+                    <li><a href="index.php?page=about">About Us</a></li>
+                    <li><a href="index.php?page=contact">Contact</a></li>
+                    <li><a href="index.php?page=blog">Blog</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    
+    <main>
+        <?php echo $content; ?>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About Us</h3>
+                    <p>AgroMart is your trusted source for agricultural products.</p>
+            </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p>Email: info@agromart.com</p>
+                    <p>Phone: +1-234-567-8900</p>
+                    </div>
+                <div class="footer-section">
+                    <h3>Follow Us</h3>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; <?php echo date('Y'); ?> AgroMart. All rights reserved.</p>
+        </div>
+            </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.5/swiper-bundle.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html> 

@@ -1,0 +1,43 @@
+# IDE and Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Configuration files with sensitive data
+config.local.php
+
+# Uploaded files and images
+/uploads/*
+!/uploads/.gitkeep
+/images/products/*
+!/images/products/.gitkeep
+/images/categories/*
+!/images/categories/.gitkeep
+
+# Dependency directories
+/vendor/
+/node_modules/
+
+# Log files
+*.log
+error_log
+access_log
+
+# Cache files
+/cache/*
+!/cache/.gitkeep
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Backup files
+*.bak
+*.swp
+*~ 
